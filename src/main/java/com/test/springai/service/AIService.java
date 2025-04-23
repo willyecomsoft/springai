@@ -1,10 +1,15 @@
 package com.test.springai.service;
 
+import com.test.springai.dto.BookDetail;
+import com.test.springai.prompt.BookPrompt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -48,4 +53,26 @@ public class AIService {
                 .stream()
                 .content();
     }
+
+
+    public String getBooks(String category, String year) {
+        return chatClient.prompt()
+                .user(u -> u.text(BookPrompt.DEFAULT)
+                        .param("category", category)
+                        .param("year", year)
+                )
+                .call()
+                .content();
+    }
+
+    public List<BookDetail> getBooksDto(String category, String year) {
+        return chatClient.prompt()
+                .user(u -> u.text(BookPrompt.DEFAULT)
+                        .param("category", category)
+                        .param("year", year)
+                )
+                .call()
+                .entity(new ParameterizedTypeReference<>() {});
+    }
+
 }
