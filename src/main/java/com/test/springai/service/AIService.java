@@ -5,6 +5,7 @@ import com.test.springai.prompt.BookPrompt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -67,10 +68,11 @@ public class AIService {
 
     public List<BookDetail> getBooksDto(String category, String year) {
         return chatClient.prompt()
-                .user(u -> u.text(BookPrompt.DEFAULT)
+                .user(u -> u.text("請建議我幾本 {year} 年時 {category} 類型的暢銷書。")
                         .param("category", category)
                         .param("year", year)
                 )
+                .advisors(new SimpleLoggerAdvisor())
                 .call()
                 .entity(new ParameterizedTypeReference<>() {});
     }
